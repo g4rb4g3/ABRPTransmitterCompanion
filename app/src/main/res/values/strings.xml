@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">ABRPTransmitterCompanion</string>
+    <string name="send">Send</string>
+    <string name="abrp_token">ABRP Token:</string>
+    <string name="companion_ip">Companion IP:</string>
+    <string name="token_empty">Token empty, nothing to send.</string>
+</resources>
