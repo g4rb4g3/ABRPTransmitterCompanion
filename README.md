@@ -4,6 +4,7 @@ Allows you to easylie send your ABRP token to your headunit running ABRPTransmit
 
 Getting started:<br />
 Simply insert the IP address ABRPTransmitter is showing on your cars headunit and your token. Finally press send.<br />
+Make sure your smartphone and your car are on the same WiFi.
 ![Screenshot](doc/screenshot.png)
 
 If you like my work I'd be happy if you buy me a coffee. Thanks!<br />
