@@ -42,7 +42,7 @@ public class MainActivity extends AppCompatActivity {
 
   private static final int EXCHANGE_PORT = 6942;
 
-  private AbrpTransmitterServer mAbrpTransmitterServer = new AbrpTransmitterServer(8080);
+  private AbrpTransmitterServer mAbrpTransmitterServer = null;
 
   private ProgressDialog mProgressDialog;
   private Spinner mSpReleases;
@@ -113,19 +113,15 @@ public class MainActivity extends AppCompatActivity {
       }
     });
 
-    try {
-      mAbrpTransmitterServer.start();
-    } catch (IOException e) {
-      Log.e(TAG, "error starting server", e);
-    }
-
     new AbrpTransmitterReleaseLoader().execute(ABRPTRANSMITTER_RELEASE_URL);
   }
 
   @Override
   public void onDestroy() {
     super.onDestroy();
-    mAbrpTransmitterServer.stop();
+    if(mAbrpTransmitterServer != null) {
+      mAbrpTransmitterServer.stop();
+    }
   }
 
   private class AbrpTransmitterReleaseLoader extends AsyncTask<String, String, String> {
@@ -219,6 +215,12 @@ public class MainActivity extends AppCompatActivity {
         }
       } else {
         mApkPath = result;
+        mAbrpTransmitterServer = new AbrpTransmitterServer(8080, result);
+        try {
+          mAbrpTransmitterServer.start();
+        } catch (IOException e) {
+          Log.e(TAG, "error starting server", e);
+        }
       }
       if (mProgressDialog.isShowing()) {
         mProgressDialog.dismiss();
