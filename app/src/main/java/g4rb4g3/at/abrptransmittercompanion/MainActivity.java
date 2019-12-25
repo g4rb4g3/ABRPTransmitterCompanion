@@ -6,6 +6,7 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -14,6 +15,11 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
+
+import com.tananaev.adblib.AdbBase64;
+import com.tananaev.adblib.AdbConnection;
+import com.tananaev.adblib.AdbCrypto;
+import com.tananaev.adblib.AdbStream;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -31,6 +37,7 @@ import java.io.PrintWriter;
 import java.net.HttpURLConnection;
 import java.net.Socket;
 import java.net.URL;
+import java.security.NoSuchAlgorithmException;
 import java.util.LinkedHashMap;
 
 public class MainActivity extends AppCompatActivity {
@@ -46,6 +53,7 @@ public class MainActivity extends AppCompatActivity {
 
   private ProgressDialog mProgressDialog;
   private Spinner mSpReleases;
+  private EditText mEdCompanionIp;
   private LinkedHashMap<String, String> mReleases;
   private String mApkPath = null;
 
@@ -56,7 +64,7 @@ public class MainActivity extends AppCompatActivity {
 
     final Activity activity = this;
     final Context context = getApplicationContext();
-    final EditText edCompanionIp = findViewById(R.id.ed_companion_ip);
+    mEdCompanionIp = findViewById(R.id.ed_companion_ip);
     final EditText edToken = findViewById(R.id.ed_abrp_token);
     mSpReleases = findViewById(R.id.sp_releases);
     mSpReleases.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -90,7 +98,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void run() {
               try {
-                Socket socket = new Socket(edCompanionIp.getText().toString(), EXCHANGE_PORT);
+                Socket socket = new Socket(mEdCompanionIp.getText().toString(), EXCHANGE_PORT);
                 PrintWriter out = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())), true);
                 out.println(jsonObject.toString());
 
@@ -114,6 +122,26 @@ public class MainActivity extends AppCompatActivity {
     });
 
     new AbrpTransmitterReleaseLoader().execute(ABRPTRANSMITTER_RELEASE_URL);
+  }
+
+  private void executeRemoteAdb() {
+    try {
+      Socket socket = new Socket(mEdCompanionIp.getText().toString(), 5555);
+
+      AdbCrypto crypto = AdbCrypto.generateAdbKeyPair(new AdbBase64() {
+        @Override
+        public String encodeToString(byte[] data) {
+          return Base64.encodeToString(data, Base64.NO_CLOSE);
+        }
+      });
+
+      AdbConnection connection = AdbConnection.create(socket, crypto);
+      connection.connect();
+
+      AdbStream stream = connection.open("shell:logcat");
+    } catch (IOException | InterruptedException | NoSuchAlgorithmException e) {
+      Log.e(TAG, e.getMessage(), e);
+    }
   }
 
   @Override
