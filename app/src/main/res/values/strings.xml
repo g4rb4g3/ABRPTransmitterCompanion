@@ -7,4 +7,11 @@
     <string name="please_wait_loading_releaes">Please wait, loading releases from GitHub...</string>
     <string name="choose_release">Choose a release</string>
     <string name="please_wait_downloading">Please wait, downloading</string>
+    <string name="release">Release:</string>
+    <string name="download_amp_install"><![CDATA[Download & install]]></string>
+    <string name="companion_ip_empty">Error! Companion IP empty.</string>
+    <string name="choose_release_first">Choose a release first</string>
+    <string name="sending_apk">Sending ABRPTransmitter to head unit</string>
+    <string name="installing_apk">Installing ABRPTransmitter on head unit</string>
+    <string name="launching_apk">Starting ABRPTransmitter on head unit</string>
 </resources>

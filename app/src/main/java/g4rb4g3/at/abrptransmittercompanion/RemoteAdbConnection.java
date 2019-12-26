@@ -14,21 +14,16 @@ import java.net.Socket;
 import java.security.NoSuchAlgorithmException;
 
 public class RemoteAdbConnection implements Runnable {
-  private String mIp;
-  private AdbStream mAdbStream;
+
   boolean mDownloadCompleted = false;
   boolean mInstallCompleted = false;
+  private String mIp;
+  private AdbStream mAdbStream;
+  private RemoteAdbConnectionDelegate mRemoteAdbConnectionDelegate;
 
-  public RemoteAdbConnection(String ip) {
+  public RemoteAdbConnection(String ip, RemoteAdbConnectionDelegate delegate) {
     mIp = ip;
-  }
-
-  public void close() {
-    try {
-      mAdbStream.close();
-    } catch (IOException e) {
-      Log.e(MainActivity.TAG, e.getMessage(), e);
-    }
+    mRemoteAdbConnectionDelegate = delegate;
   }
 
   @Override
@@ -55,10 +50,10 @@ public class RemoteAdbConnection implements Runnable {
           while (!mAdbStream.isClosed())
             try {
               String msg = new String(mAdbStream.read(), "UTF-8");
-              if(msg.contains("app-debug.apk        100%")) {
+              if (msg.contains("app-debug.apk        100%")) {
                 mDownloadCompleted = true;
               }
-              if(msg.equals("Success\r\n")) {
+              if (msg.equals("Success\r\n")) {
                 mInstallCompleted = true;
               }
               Log.d(MainActivity.TAG, msg);
@@ -75,17 +70,32 @@ public class RemoteAdbConnection implements Runnable {
         }
       }).start();
 
+      mRemoteAdbConnectionDelegate.setProgressDialogMessage(R.string.sending_apk);
       mAdbStream.write("busybox wget http://" + Wireless.getInternalMobileIpAddress() + ":8080 -O /sdcard/app-debug.apk\n");
-      while(!mDownloadCompleted) {
+      while (!mDownloadCompleted) {
         Thread.sleep(500);
       }
+
+      mRemoteAdbConnectionDelegate.setProgressDialogMessage(R.string.installing_apk);
       mAdbStream.write("pm install -r /sdcard/app-debug.apk\n");
-      while(!mInstallCompleted) {
+      while (!mInstallCompleted) {
         Thread.sleep(500);
       }
+
+      mRemoteAdbConnectionDelegate.setProgressDialogMessage(R.string.launching_apk);
       mAdbStream.write("monkey -p g4rb4g3.at.abrptransmitter -c android.intent.category.LAUNCHER 1\n");
+      Thread.sleep(500);
+      mAdbStream.close();
+
+      mRemoteAdbConnectionDelegate.completed();
     } catch (IOException | InterruptedException | NoSuchAlgorithmException e) {
       Log.e(MainActivity.TAG, e.getMessage(), e);
     }
+  }
+
+  public interface RemoteAdbConnectionDelegate {
+    void setProgressDialogMessage(int id);
+
+    void completed();
   }
 }
