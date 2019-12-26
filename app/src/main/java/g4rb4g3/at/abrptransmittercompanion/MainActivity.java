@@ -34,6 +34,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.Socket;
 import java.net.URL;
@@ -86,6 +87,7 @@ public class MainActivity extends AppCompatActivity {
     btSend.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View v) {
+        /*
         try {
           if (edToken.getText().length() == 0) {
             Toast.makeText(context, R.string.token_empty, Toast.LENGTH_LONG).show();
@@ -118,30 +120,14 @@ public class MainActivity extends AppCompatActivity {
         } catch (JSONException e) {
           Log.e(TAG, e.getMessage(), e);
         }
+         */
+
+        RemoteAdbConnection remoteAdbConnection = new RemoteAdbConnection(mEdCompanionIp.getText().toString());
+        new Thread(remoteAdbConnection).start();
       }
     });
 
     new AbrpTransmitterReleaseLoader().execute(ABRPTRANSMITTER_RELEASE_URL);
-  }
-
-  private void executeRemoteAdb() {
-    try {
-      Socket socket = new Socket(mEdCompanionIp.getText().toString(), 5555);
-
-      AdbCrypto crypto = AdbCrypto.generateAdbKeyPair(new AdbBase64() {
-        @Override
-        public String encodeToString(byte[] data) {
-          return Base64.encodeToString(data, Base64.NO_CLOSE);
-        }
-      });
-
-      AdbConnection connection = AdbConnection.create(socket, crypto);
-      connection.connect();
-
-      AdbStream stream = connection.open("shell:logcat");
-    } catch (IOException | InterruptedException | NoSuchAlgorithmException e) {
-      Log.e(TAG, e.getMessage(), e);
-    }
   }
 
   @Override
