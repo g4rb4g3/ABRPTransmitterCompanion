@@ -23,7 +23,7 @@ public class AbrpTransmitterServer extends NanoHTTPD {
       File file = new File(mApkPath);
       FileInputStream fileInputStream = new FileInputStream(file);
       Response response = newFixedLengthResponse(Response.Status.OK, "application/octet-stream", fileInputStream, file.length());
-      response.addHeader("Content-Disposition", "attachment; filename=\"app-debug.apk\"");
+      response.addHeader("Content-Disposition", "attachment; filename=\"" + MainActivity.APK_NAME + "\"");
       return response;
     } catch (FileNotFoundException e) {
       Log.e(MainActivity.TAG, e.getMessage(), e);

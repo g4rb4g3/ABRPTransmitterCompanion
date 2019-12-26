@@ -50,7 +50,7 @@ public class RemoteAdbConnection implements Runnable {
           while (!mAdbStream.isClosed())
             try {
               String msg = new String(mAdbStream.read(), "UTF-8");
-              if (msg.contains("app-debug.apk        100%")) {
+              if (msg.contains(MainActivity.APK_NAME + "        100%")) {
                 mDownloadCompleted = true;
               }
               if (msg.equals("Success\r\n")) {
@@ -71,13 +71,13 @@ public class RemoteAdbConnection implements Runnable {
       }).start();
 
       mRemoteAdbConnectionDelegate.setProgressDialogMessage(R.string.sending_apk);
-      mAdbStream.write("busybox wget http://" + Wireless.getInternalMobileIpAddress() + ":8080 -O /sdcard/app-debug.apk\n");
+      mAdbStream.write("busybox wget http://" + Wireless.getInternalMobileIpAddress() + ":8080 -O /sdcard/" + MainActivity.APK_NAME + "\n");
       while (!mDownloadCompleted) {
         Thread.sleep(500);
       }
 
       mRemoteAdbConnectionDelegate.setProgressDialogMessage(R.string.installing_apk);
-      mAdbStream.write("pm install -r /sdcard/app-debug.apk\n");
+      mAdbStream.write("pm install -r /sdcard/" + MainActivity.APK_NAME + "\n");
       while (!mInstallCompleted) {
         Thread.sleep(500);
       }
