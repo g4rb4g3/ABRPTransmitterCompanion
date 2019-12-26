@@ -6,7 +6,7 @@ Allows you to easylie install ABRPTransmitter on your Hyundai Ioniq head unit an
 Getting started:<br />
 * Connect your smartphone and the head unit to the same WiFi network (works with Hotspot too).
 * Find your head units IP (goto Android Settings -> WiFi, select your WiFi network and see the IP or look at your WiFi router/access point).
-* Enable ADB Ethernet mode on your head unit.
+* Enable ADB Ethernet mode on your head unit. (See Wiki https://github.com/g4rb4g3/ABRPTransmitterCompanion/wiki/Enable-ADB-Ethernet-mode)
 * Start ABRPTransmitterCompanion on your smartphone, insert the head units IP as "Companion IP".
 * Choose a release from the drop down.
 * Press "Download & Install"
