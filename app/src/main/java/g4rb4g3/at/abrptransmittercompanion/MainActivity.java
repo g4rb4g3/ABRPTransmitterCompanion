@@ -183,6 +183,7 @@ public class MainActivity extends AppCompatActivity {
           }
           return buffer.toString();
         } else {
+          mProgressDialog.setMessage(getString(R.string.please_wait_downloading) + " " + mSpReleases.getSelectedItem());
           connection.connect();
 
           if(connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
