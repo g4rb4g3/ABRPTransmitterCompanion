@@ -1,4 +1,8 @@
 
+```diff
+- Abandonware! Since I sold my Ioniq a while back there is no more development going on here.
+```
+
 # ABRPTransmitterCompanion
 
 Allows you to easylie install ABRPTransmitter on your Hyundai Ioniq head unit and send the www.abetterrouteplanner.com token to it.<br />
